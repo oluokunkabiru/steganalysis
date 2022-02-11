@@ -39,13 +39,13 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 <body>
 	<div class="video-w3l" data-vide-bg="{{ asset('asset/vide1') }}">
 		<!-- title -->
-		{{-- <h1>
-			<span>QR</span> code
-			<span>S</span>smart
-			<span>A</span>ttendance
+		<h1>
+			<span>AES</span> Cryptography
+			<span>and LSB</span>Steganography
+			{{--  <span>PDV</span>Steganography  --}}
 
 
-        </h1> --}}
+        </h1>
 		<!-- //title -->
 		<!-- content -->
         <div class="sub-main-w3">

@@ -5,85 +5,14 @@
     <div class="section-header">
         <h1>Dashboard</h1>
     </div>
-    <div class="row">
-        <div class="col-lg-3 col-md-6 col-sm-6 col-12">
-            <div class="card card-statistic-1">
-                <div class="card-icon bg-primary">
-                    <i class="far fa-user"></i>
-                </div>
-                <a href="">
-                <div class="card-wrap">
-                    <div class="card-header">
-                        <h4>Message Encrypt</h4>
-                    </div>
-                    <div class="card-body">
+    <h1>Steganalysis</h1>
 
-                    </div>
-                </div>
-                </a>
-            </div>
-        </div>
-        <div class="col-lg-3 col-md-6 col-sm-6 col-12">
-            <div class="card card-statistic-1">
-                <div class="card-icon bg-danger">
-                    <i class="far fa-newspaper"></i>
-                </div>
-                <a href="">
-                <div class="card-wrap">
-                    <div class="card-header">
-                        <h4>vboy</h4>
-                    </div>
-                    <div class="card-body">
-
-                    </div>
-                </div>
-            </a>
-            </div>
-        </div>
-        <div class="col-lg-3 col-md-6 col-sm-6 col-12">
-            <div class="card card-statistic-1">
-                <div class="card-icon bg-warning">
-                    <i class="far fa-file"></i>
-                </div>
-            <a href="">
-                <div class="card-wrap">
-                    <div class="card-header">
-                        <h4></h4>
-                    </div>
-
-                    <div class="card-body" id="numbersOfAttendee">
-
-                    </div>
-
-                </div>
-            </a>
-            </div>
-        </div>
-
-        <div class="col-lg-3 col-md-6 col-sm-6 col-12">
-            <div class="card card-statistic-1">
-                <div class="card-icon bg-success">
-                    <i class="fas fa-circle"></i>
-                </div>
-                <a href="">
-                <div class="card-wrap">
-                    <div class="card-header">
-                        <h4>Total attendance</h4>
-                    </div>
-                    <div class="card-body">
-
-                    </div>
-                </div>
-            </a>
-            </div>
-        </div>
-    </div>
     <div class="section-body">
         <h2 class="section-title">{{ ucwords(Auth::user()->name) }}</h2>
         {{--  <p class="section-lead">Change information about yourself on this page.</p>  --}}
 
         <div class="row mt-sm-4">
-            <div class="col-12 col-md-12 col-lg-6">
+            {{--  <div class="col-12 col-md-12 col-lg-6">
                 <div class="card">
                     <div class="card-header">
                         <h4>Encryption</h4>
@@ -141,6 +70,16 @@
                             </span>
                             @enderror
                         </div>
+                        <div class="form-radio">
+                            <label class="form-radio-label" for="check1">
+                              <input type="radio" class="form-radio-input" id="check1" name="encryptionalgorithm" value="pvd" checked>PVD
+                            </label>
+                          </div>
+                          <div class="form-radio">
+                            <label class="form-check-label" for="check2">
+                              <input type="radio" class="form-radio-input" id="check2" name="encryptionalgorithm" value="lsb">LSB
+                            </label>
+                          </div>
                     </div>
 
                         <div class="row" id="imageinfo" style="display: none">
@@ -151,7 +90,7 @@
                                 <h6>Image Information</h6>
                                 <p>Width: <b id="coverImgWidth"></b></p>
                                 <p>Height: <b id="coverImgHeight"></b></p>
-                                {{-- <p>Payload: <b>200</b></p> --}}
+                                <p>Payload: <b>200</b></p>
                             </div>
                         </div>
 
@@ -163,14 +102,14 @@
                     </div>
                 </form>
                 </div>
-            </div>
+            </div>  --}}
             <div class="col-12 col-md-12 col-lg-6">
                 <div class="card">
                         <div class="card-header">
-                            <h4>Decryption</h4>
+                            <h4>Check For stego Image</h4>
                         </div>
                         <div class="card-body">
-                            <form id="decryptStegoIma" action="{{ route('decrypt') }}" method="post" enctype="multipart/form-data">
+                            <form id="decryptStegoImage" method="post" enctype="multipart/form-data">
                             @csrf
                             <div class="form-group">
                                 <label for="">Choose Stego Image</label>
@@ -182,36 +121,45 @@
                                 @enderror
                             </div>
 
-                            <div class="form-group">
-                                <label for="usr">Sender Key:</label>
-                                <input type="password" name="dprivate"  value="{{ old('dprivate') }}" class="form-control @error('dprivate') is-invalid @enderror" id="usr">
-                                @error('dprivate')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
 
-
-
+                            {{--  <h4 class="stegostatusyes text-success"></h4>  --}}
+                            {{--  <h4 class="stegostatusyes text-danger"></h4>  --}}
+                            <h4 id="stegoimageinfo"></h4>
+                            <input type="hidden" name="status" value="check" id="status">
                         </div>
                         <div class="card-footer text-right">
-                            <button type="submit" class="btn btn-primary">Decrypt now</button>
+                            <input type="submit" name="checkstego" id="checkstego" value="Check Stego" class="btn btn-info">
+                            {{--  <input type="submit" name="decryptstego" class="btn btn-warning" value="Decrypt message carried">
+                            <input type="submit"  name="destroystego" class="btn btn-danger" value="Destroy message carried">  --}}
+
                         </div>
                     </form>
                 </div>
 
-                <div class="row" id="stegoimageinfo" style="display: none">
-                    <div class="col">
+                {{--  <div class="row" id="stegoimageinfo" style="display: none">  --}}
+
+                    <div class="col-6">
                         <img id="stegoimageinf" src="{{ asset('assets/fonts/images/img_avatar3.png') }}" style="width: 200px" class="card-img" alt="">
                     </div>
-                    <div class="col">
-                        <h6>Image Information</h6>
-                        <p>Width: <b id="stegoImgWidth"></b></p>
-                        <p>Height: <b id="stegoImgHeight"></b></p>
-                        {{-- <p>Payload: <b>200</b></p> --}}
+                     <div class="col-6">
+                        <img id="stegoimagedestroyed" class="card-img" >
+                        <p><a href="" download id="downloaddestroyed"></a>
+                        </p>
                     </div>
+                    {{--  <span id="notstego"></span>
+                    <span id="invalidekey"></span>  --}}
+
+
+                    {{--  <div class="col-12" style="width: min-content">
+                        <span id="ciphertextfromstego"></span>
+                    </div>
+                    <div class="col-6">
+                        <h6 id="plaintextfromstego"></h6>
+                    </div>  --}}
                 </div>
+
+
+
             </div>
         </div>
     </div>
@@ -303,14 +251,46 @@ $(document).ready(function() {
                 url: "{{ route('decrypt') }}",
                 data: datas,
                 contentType: false,
-                // dataType : 'json',
+                dataType : 'json',
                 cache: false,
                 processData: false,
                 success: function(data) {
-                    // console.log(data);
-                    $("#generatedStedImage").html(data);
+
+                   if(data.plain){
+                        // alert(data.plain)
+                        $("#stegoimageinfo").removeClass();
+                        $("#stegoimageinfo").addClass('text-danger').text(data.plain);
+                        $("#status").val("destroy");
+                        $("#checkstego").removeAttr('class');
+                        $("#checkstego").val("Destroy Stego").addClass('btn btn-danger');
+
+                    }
+                    if(data.check){
+                        $("#stegoimageinfo").removeAttr('class');
+                        $("#stegoimageinfo").addClass('text-info').text(data.check);
+                        $("#status").val("decode");
+                        $("#checkstego").removeAttr('class');
+                        $("#checkstego").val("Decode Stego").addClass('btn btn-warning');
+
+                    }
+                    if(data.destroy){
+                        $("#stegoimageinfo").removeAttr('class');
+                        $("#stegoimageinfo").addClass('text-info').text(data.msg);
+                        $("#stegoimagedestroyed").attr('src', data.destroy);
+                        $("#status").val("check");
+                        $("#downloaddestroyed").attr('href', data.destroy).text('Download Destroy Now');
+
+                        $("#checkstego").removeAttr('class');
+                        $("#checkstego").remove();
+
+                    }
+
+
                 },
                 error:function(err){
+                    if(err.status ==500){
+                        $("#stegoimageinfo").addClass('text-danger').html("<h4 class='text-danger'>Not Stego Image, Please Request for Another Image From Sender</h4>");
+                    }
                     if(err.status ==422){
                         console.log(err.status);
                         $.each(err.responseJSON.errors, function(i, error){
@@ -339,6 +319,10 @@ $(document).ready(function() {
                         $("#"+w).text(this.width)
                         $("#"+h).text(this.height)
                         $("#"+display).removeAttr('style')
+                        $("#status").val("check");
+                        $("#checkstego").removeAttr('class');
+                        $("#checkstego").val("Check Stego Status").addClass('btn btn-info');
+
                     }
                 };
                 reader.readAsDataURL(input.files[0]);

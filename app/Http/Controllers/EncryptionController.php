@@ -11,65 +11,26 @@ class EncryptionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
     public function index()
     {
         //
     }
 
+    // function encryptionMethod(){
+    //     return 'aes-256-cbc';
+    // }
 
-    public function AESDecryption($message, $key)
-    {
-        $encrypt_method = "AES-256-CBC";
-        $secret_key = $key;
-        $shareKey = 'private';
+    // function authorizeKey($key)
+    // {
+    //     return hash('sha256', $key);
+    // }
 
-        $key = hash('sha256', $secret_key);
-        // return $key;
+    // function iv(){
+    //     return substr(hash('sha256', "ng"), 0, 16);
+    // }
 
-        $iv = substr(hash('sha256', $shareKey), 0, 16);
-        // return $iv;
-        // openssl_encrypt("hgjhgj","kkljkjlkjkljk","");
-        $output = openssl_encrypt($message, $encrypt_method, $key, 0, $iv);
-        // return $output;
-        // return openssl_get_privatekey($output);
-        $output = base64_encode($output);
-        $output = openssl_decrypt(base64_decode($message), $encrypt_method, $key, 0, $iv);
 
-        return $output;
-    }
-    public function AESencrypt($message, $key)
-    {
-        // $output = false;
-
-        $encrypt_method = "AES-256-CBC";
-        $secret_key = $key;
-        $shareKey = 'private';
-
-        $key = hash('sha256', $secret_key);
-        // return $key;
-
-        $iv = substr(hash('sha256', $shareKey), 0, 16);
-
-        $output = openssl_encrypt($message, $encrypt_method, $key, 0, $iv);
-
-        $output = base64_encode($output);
-        return $output;
-
-        // return $output;
-    }
-
-    public function makeAES(Request $request)
-    {
-        $request->validate([
-            'message' => 'required|string',
-            // 'public' => 'required|string',
-            'private' => 'required|string'
-        ]);
-        $output = $this->AESencrypt($request->message, $request->key);
-        return $output;
-        //    return redirect()->back()->with('encrypted', $output);
-
-    }
 
     function convertMeToBinary($me)
     {
@@ -89,14 +50,16 @@ class EncryptionController extends Controller
 
         // move_uploaded_file($_FILES["image"]["tmp_name"], $image);
         $split = explode('/', $image);
+        // return $image;
         $images = $split[1];
-        // echo "Uploaded";
+        // echo "Uploaded";$algo."YOBEGAIL".
         $msg = $message;
 
         $src = $image;
         //Start image
+        // return $src;
 
-        $msg .= '|';
+        $msg .= 'vb';
         //EOF sign, decided to use the pipe symbol to show our decrypter the end of the message
         $msgBin = $this->convertMeToBinary($msg);
         //Convert our message to binary
@@ -177,16 +140,12 @@ class EncryptionController extends Controller
         // return $encrypt;
         $stego = imagepng($img, $encrypt . $images);
         return $encrypt . $images;
-        //  return "<img src='". $encrypt.$images ."' class='card-img' style='width: 500px;'>";
-        //Create image
-        //    $success =  ' have successfully encrypted to ' .$encrypt.$images;
-        //    return $success;
-        //    return ;
-        //    header('location:'. $_SERVER['PHP_SELF'].'?success='.$success);
-        //     //Echo our image file name
 
         imagedestroy($img); //get rid of it
     }
+
+
+
 
 
     function toString($str)
@@ -214,11 +173,10 @@ class EncryptionController extends Controller
             $file_name = time() . "." . $file->getClientOriginalExtension();
 
             $cover =  $file->move('Coverimage', $file_name);
-            //    return $cover;
             $embed = $this->embedMessageIntoImage($request->encrypedmessage, $cover);
-            //    return $embed;
             if ($embed) {
-                return view('users.staffs.encrypted', compact(['embed']));
+                return $embed;
+                return view('users.staffs.encrypted', compact(['embed', 'algo']));
                 return redirect()->back()->with(['success' => 'Message Embed successfully', 'stegoimage', $embed]);
             }
         }
@@ -230,18 +188,50 @@ class EncryptionController extends Controller
     public function decryptStego(Request $request)
     {
         $request->validate([
-            'dprivate' => 'required|string',
+            // 'dprivate' => 'required|string',
             'stegoimage' => 'required|image|mimes:png,jpg'
         ]);
-        return $request;
-        return $this->steganalysis($request->file('stegoimage'));
+
+        // return $request;
+        $status = $request->status;
+        // return $status;
+        $cipherText = $this->steganalysis($request->file('stegoimage'));
+
+        if($status=="check"){
+            return json_encode(array('check' => 'The image is stegano image'));
+        }elseif($status=="decode"){
+            $cipherText = $this->steganalysis($request->file('stegoimage'));
+            return json_encode(array('plain'=>$cipherText));
+        }elseif ($status=="destroy") {
+
+            if ($file = $request->file('stegoimage')) {
+
+                $cipherText = $this->steganalysis($request->file('stegoimage'));
+                  $file_name = time() . "." . $file->getClientOriginalExtension();
+
+                $cover =  $file->move('Coverimage', $file_name);
+                // return $cipherText;
+                $embed = $this->embedMessageIntoImage($cipherText, $cover);
+                if ($embed) {
+                    // return $embed;
+                    // $destroy =  view('users.staffs.encrypted', compact(['embed']));
+                    // return print_r($destroy);
+                    return json_encode(array('destroy'=>asset($embed), 'msg'=>'Message Destroyed Successfully, Kindly Download the destroyed image below'));
+
+                    // return redirect()->back()->with(['success' => 'Message destroyed successfully', 'stegoimage', $embed]);
+                }
+            }
+         }
+
+
+
     }
 
 
     function steganalysis($image)
     {
         $src = $image;
-        // return $image;
+        // return $src;
         $img = imagecreatefrompng($src);
         //Returns image identifier
         $real_message = '';
@@ -298,8 +288,9 @@ class EncryptionController extends Controller
                     // echo ('done<br>');
                     //  Yes we're done now
                     $real_message = $this->toString(substr($real_message, 0, -8));
+                   return $real_message;
                     // Show
-                    die;
+                    // die;
                 }
                 $count = 0;
                 //Reset counter
