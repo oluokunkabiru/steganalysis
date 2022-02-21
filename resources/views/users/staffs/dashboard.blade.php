@@ -259,7 +259,7 @@ $(document).ready(function() {
                    if(data.plain){
                         // alert(data.plain)
                         $("#stegoimageinfo").removeClass();
-                        $("#stegoimageinfo").addClass('text-danger').text(data.plain);
+                        $("#stegoimageinfo").addClass('text-success').text(data.plain);
                         $("#status").val("destroy");
                         $("#checkstego").removeAttr('class');
                         $("#checkstego").val("Destroy Stego").addClass('btn btn-danger');
@@ -275,7 +275,7 @@ $(document).ready(function() {
                     }
                     if(data.destroy){
                         $("#stegoimageinfo").removeAttr('class');
-                        $("#stegoimageinfo").addClass('text-info').text(data.msg);
+                        $("#stegoimageinfo").addClass('text-danger').text(data.msg);
                         $("#stegoimagedestroyed").attr('src', data.destroy);
                         $("#status").val("check");
                         $("#downloaddestroyed").attr('href', data.destroy).text('Download Destroy Now');
