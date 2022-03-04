@@ -71,7 +71,15 @@ class EncryptionController extends Controller
         // return $msgBin;
         if ($type == 'jpg' || $type == 'jpeg') {
             $img = imagecreatefromjpeg($src);
-        } else {
+        } elseif ($type=="gif") {
+            # code...
+            $img = imagecreatefromgif($src);
+
+        }elseif ($type=="bmp") {
+            # code...
+            $img = imagecreatefrombmp($src);
+
+        }else {
             $img = imagecreatefrompng($src);
         }
         //returns an image identifier
@@ -137,8 +145,25 @@ class EncryptionController extends Controller
         if (!is_dir($encrypt)) {
             mkdir($encrypt);
         }
-        // return $encrypt;
-        $stego = imagepng($img, $encrypt . $images);
+
+
+        if ($type == 'jpg' || $type == 'jpeg') {
+            // $img = imagecreatefromjpeg($src);
+            imagejpeg($img, $encrypt . $images);
+        } elseif ($type=="gif") {
+            # code...
+            // $img = imagecreatefromgif($src);
+            imagegif($img, $encrypt . $images);
+
+        }elseif ($type=="bmp") {
+            # code...
+            // $img = imagecreatefrombmp($src);
+            imagebmp($img, $encrypt . $images);
+
+        }else {
+            // $img = imagecreatefrompng($src);
+            imagepng($img, $encrypt . $images);
+        }
         return $encrypt . $images;
 
         imagedestroy($img); //get rid of it
